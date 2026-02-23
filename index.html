@@ -1841,24 +1841,75 @@
   function genGeneralEN(d) {
     const m = [];
     const hn = d.hotelName, url = d.portalUrl, city = d.city;
-    const greeting = d.contactName ? `Hi ${d.contactName}` : 'Hello';
+    const fn = d.contactName || '';
+    const greeting = fn ? `Hi ${fn}` : 'Hello';
 
+    // Day 1 Email
     m.push({ day:1, channel:'email', phase:'reveal', purpose:'Value Reveal',
       subject: `I built ${hn}'s guest portal app`,
       body: `${greeting},\n\nI noticed ${hn} does not have a digital guest portal, so I went ahead and built one: ${url}\n\nIt already includes your hotel information, room details, and local recommendations${city ? ' for the ' + city + ' area' : ''}. Guests can install it on their phone in one tap.\n\nNo strings attached. It is yours to explore.\n\nIf you would like to see what it looks like with your full branding and live booking integration, I would love to show you. But for now, just have a look.\n\nBest,\nRok` });
 
+    // Day 2 LinkedIn
+    m.push({ day:2, channel:'linkedin', phase:'reveal', purpose:'Connection Request',
+      subject: null,
+      body: `${greeting}, I work with hotels on digital guest experiences. I sent something over via email that I think ${hn} would find valuable. Would love to connect.`,
+      note: 'Send as connection request note (max 300 chars). If already connected, send as DM instead.' });
+
+    // Day 3 WhatsApp
+    m.push({ day:3, channel:'whatsapp', phase:'reveal', purpose:'Initial Message + Portal Link',
+      subject: null,
+      body: `${greeting}, this is Rok from Nevron.\n\nI built a digital guest portal specifically for ${hn} and wanted to share it with you: ${url}\n\nIt works like an app your guests can install on their phones. Already has your hotel info, area guide, and recommendations.\n\nWould love your thoughts on it.\n\n(Reply STOP to opt out)` });
+
+    // Day 5 Email
     m.push({ day:5, channel:'email', phase:'reveal', purpose:'Video Walkthrough Reference',
       subject: `90 seconds of ${hn}'s new guest app`,
       body: `${greeting},\n\nI sent ${hn}'s guest portal a few days ago. In case you have not had a chance to explore it, I recorded a quick 90 second walkthrough: [VIDEO LINK]\n\nIt shows how your guests would use it to find restaurant recommendations, book activities${city ? ', and navigate the ' + city + ' area' : ', and explore the local area'}.\n\nHappy to answer any questions.\n\nBest,\nRok` });
 
-    m.push({ day:10, channel:'email', phase:'value', purpose:'Social Proof (Case Studies)',
+    // Day 7 Phone
+    m.push({ day:7, channel:'phone', phase:'value', purpose:'Warm Follow-up Call',
+      subject: null,
+      body: `OPENING:\n"${greeting}, this is Rok from Nevron. I sent ${hn}'s guest portal app earlier this week. I wanted to check in and see if you had a chance to look at it."\n\nIF THEY SAW IT:\n"Great! What did you think? [Listen] I built that using publicly available information, but imagine what it could look like with your full branding, live booking integration, and custom recommendations. Would it make sense to spend 15 minutes showing you the full version?"\n\nIF THEY DID NOT SEE IT:\n"No problem at all. In short, I built a digital guest portal specifically for ${hn}. Your guests can install it on their phones and use it to find everything about your hotel${city ? ' and ' + city : ''}. Let me resend it. Would you have 15 minutes this week for a quick walkthrough?"\n\nIF THEY PUSH BACK:\n"I completely understand. The portal is live at ${url}. If you do take a look and want to discuss, I am always available."`,
+      note: 'Best call times: Tue to Thu, 10:00 to 11:30 or 14:00 to 15:30. Avoid check-in rush. Most calls go to voicemail; leave a 30 sec message.' });
+
+    // Day 8 Email
+    m.push({ day:8, channel:'email', phase:'value', purpose:'Social Proof (Case Studies)',
       subject: 'How hotels use their guest portal to drive revenue',
       body: `${greeting},\n\nHotels using a Nevron digital guest portal typically see:\n\n- +13% revenue increase (across our deployments)\n- Reduced front desk inquiries (up to 30%)\n- Marketing team actively using the platform for content updates\n\nA few examples:\n- Carana Beach Resort (Seychelles, 40 rooms): continuous upgrades since 2016, +13% revenue\n- The Fives Oceanfront (Mexico, 84 rooms): +13% revenue, real time digital signage\n- Edgewater Resort & Spa (Cook Islands, 280 rooms): +13% revenue, reduced front desk inquiries\n\nYour portal for ${hn} is already built and ready: ${url}\n\nWould a 15 minute call make sense to discuss what is possible?\n\nBest,\nRok` });
 
+    // Day 10 WhatsApp
+    m.push({ day:10, channel:'whatsapp', phase:'value', purpose:'Feature Value Drop',
+      subject: null,
+      body: `${greeting}, quick update on the ${hn} portal.\n\nDid you know your guests can use it to explore an interactive area guide, get personalized recommendations, and communicate with your team directly?\n\nThis kind of feature reduced front desk questions by 30% at hotels using similar portals.\n\nHappy to walk you through more if interested.` });
+
+    // Day 12 LinkedIn
+    m.push({ day:12, channel:'linkedin', phase:'value', purpose:'Content Share / Insight',
+      subject: null,
+      body: `${greeting}, I came across an interesting insight about digital guest experience trends and thought of ${hn}.\n\n[Share relevant article or insight]\n\nCurious if this aligns with what you are seeing at your property. The portal I built for ${hn} addresses several of these trends directly.`,
+      note: 'Find a relevant hotel tech article. Engage with their recent LinkedIn activity before sending.' });
+
+    // Day 14 Email
+    m.push({ day:14, channel:'email', phase:'value', purpose:'ROI Focus + Meeting Ask',
+      subject: `The numbers behind ${hn}'s guest portal`,
+      body: `${greeting},\n\nHotels with digital guest portals typically see:\n\n- Rating improvement leading to higher ADR\n- 2 to 5% increase in upsell revenue (spa, dining, experiences)\n- 20 to 30% reduction in repetitive front desk inquiries\n\nIndustry benchmark: a 0.1 point rating improvement translates to EUR 10 more per room per night.\n\nI would love to calculate what this means specifically for ${hn}. To do that accurately, I would just need 15 minutes of your time.\n\nWould any day next week work?\n\nBest,\nRok` });
+
+    // Day 16 Phone
+    m.push({ day:16, channel:'phone', phase:'conversion', purpose:'Second Call Attempt',
+      subject: null,
+      body: `OPENING:\n"${greeting}, it is Rok from Nevron. I have been sharing ${hn}'s guest portal over the past couple of weeks. Have you had a chance to explore it?"\n\nKEY POINTS:\n- Reference specific portal features\n- Mention case studies: "Carana Beach Resort saw +13% revenue"\n- Ask for a 15 minute video call\n- If timing is bad, ask when would be better\n\nVOICEMAIL:\n"${greeting}, it is Rok from Nevron. Just following up on the guest portal for ${hn}. I have interesting data on how similar properties use theirs. Would love 15 minutes. I will send available times via email."`,
+      note: 'If you could not reach them on Day 7, this is attempt #2.' });
+
+    // Day 17 Email
     m.push({ day:17, channel:'email', phase:'conversion', purpose:'Offer to Enhance Portal',
       subject: `Taking ${hn}'s portal to the next level`,
       body: `${greeting},\n\nThe guest portal I built for ${hn} currently uses publicly available information. Here is what it could look like fully set up:\n\nCurrent version:\n- Hotel information and room details\n- Interactive area guide${city ? ' for ' + city : ''}\n- Local recommendations\n\nFull version (with your input):\n- Your complete branding and visual identity\n- Live booking and reservation integration\n- Personalized guest communication\n- Upsell modules (spa, dining, experiences)\n- Staff dashboard and content management\n\nI would love to add your full branding and make this truly yours. Would 15 minutes work?\n\nBest,\nRok` });
 
+    // Day 19 WhatsApp voice note
+    m.push({ day:19, channel:'whatsapp', phase:'conversion', purpose:'Personal Voice Note',
+      subject: null,
+      body: `VOICE NOTE SCRIPT (30 to 45 seconds):\n\n"${greeting}, it is Rok. I just wanted to follow up on the guest portal I built for ${hn}. I know you are busy, so I will keep this short. I would love just 15 minutes of your time to show you the full potential of what this can do for your guests and your team. Would any time this week or next work for a quick video call? Let me know, and I will send over a calendar link. Thanks!"`,
+      note: 'Record as a WhatsApp voice note, not text. Voice notes feel personal and get high engagement.' });
+
+    // Day 21 Email
     m.push({ day:21, channel:'email', phase:'conversion', purpose:'Breakup: "Should I Close the Portal?"',
       subject: `Should I close ${hn}'s portal?`,
       body: `${greeting},\n\nI built a guest portal for ${hn} a few weeks ago and shared it with you, but I have not heard back.\n\nTotally understand if the timing is not right. The portal will stay live for now, so you can explore it whenever it makes sense: ${url}\n\nIf this is something ${hn} might consider in the future, just let me know and I will keep you updated with what other hotels are doing with theirs.\n\nBest,\nRok`,
@@ -1873,24 +1924,75 @@
   function genGeneralSL(d) {
     const m = [];
     const hn = d.hotelName, url = d.portalUrl, city = d.city;
-    const greeting = d.contactName ? `Pozdravljeni ${d.contactName}` : 'Pozdravljeni';
+    const fn = d.contactName || '';
+    const greeting = fn ? `Pozdravljeni ${fn}` : 'Pozdravljeni';
 
+    // Dan 1 Email
     m.push({ day:1, channel:'email', phase:'reveal', purpose:'Predstavitev portala',
       subject: `Portal za goste hotela ${hn}`,
       body: `${greeting},\n\nopazil sem, da ${hn} nima digitalnega portala za goste, zato sem ga pripravil: ${url}\n\nŽe vključuje informacije o hotelu, podrobnosti o sobah in priporočila za okolico${city ? ' (' + city + ')' : ''}. Gostje si ga na telefon naložijo z enim klikom.\n\nBrez kakršnihkoli obveznosti, preprosto si ga oglejte.\n\nČe bi želeli videti različico z Vašo celostno grafično podobo in povezavo z rezervacijskim sistemom, Vam jo z veseljem predstavim. Za zdaj si portal le oglejte.\n\nLep pozdrav,\nRok` });
 
+    // Dan 2 LinkedIn
+    m.push({ day:2, channel:'linkedin', phase:'reveal', purpose:'Zahteva za povezavo',
+      subject: null,
+      body: `${greeting}, ukvarjam se z digitalnimi izkušnjami gostov v hotelirstvu. Po e-pošti sem Vam poslal nekaj, kar bi ${hn} utegnilo zanimati. Bi se povezali?`,
+      note: 'Send as connection request note (max 300 chars). If already connected, send as DM instead.' });
+
+    // Dan 3 WhatsApp
+    m.push({ day:3, channel:'whatsapp', phase:'reveal', purpose:'Prvo sporočilo s povezavo',
+      subject: null,
+      body: `${greeting}, tukaj Rok iz Nevrona.\n\nPripravil sem digitalni portal za goste posebej za ${hn}: ${url}\n\nDeluje kot aplikacija, ki si jo gostje naložijo na telefon. Že vsebuje podatke o hotelu, vodič po okolici in priporočila.\n\nMe zanima Vaše mnenje.\n\n(Odgovorite STOP za odjavo)` });
+
+    // Dan 5 Email
     m.push({ day:5, channel:'email', phase:'reveal', purpose:'Predstavitev z video vodičem',
       subject: `90 sekund: portal za goste hotela ${hn}`,
       body: `${greeting},\n\npred nekaj dnevi sem Vam poslal portal za goste hotela ${hn}. Če si ga še niste uspeli ogledati, sem posnel kratek 90-sekundni vodič: [VIDEO LINK]\n\nPrikazuje, kako bi gostje portal uporabljali za iskanje restavracij, rezervacijo aktivnosti${city ? ' in raziskovanje okolice ' + city : ' in raziskovanje okolice'}.\n\nZ veseljem odgovorim na morebitna vprašanja.\n\nLep pozdrav,\nRok` });
 
-    m.push({ day:10, channel:'email', phase:'value', purpose:'Primeri in reference',
+    // Dan 7 Phone
+    m.push({ day:7, channel:'phone', phase:'value', purpose:'Klic za nadaljevanje',
+      subject: null,
+      body: `UVOD:\n"${greeting}, tukaj Rok iz Nevrona. Pred kratkim sem Vam poslal portal za goste hotela ${hn}. Želel sem preveriti, ali ste imeli priložnost, da si ga ogledate."\n\nČE SO GA VIDELI:\n"Odlično! Kaj menite? [Poslušajte] Ta različica je pripravljena na podlagi javno dostopnih podatkov. Predstavljajte si, kako bi izgledal z Vašo celostno grafično podobo, povezavo z rezervacijskim sistemom in prilagojenimi priporočili. Bi se splačalo, da si vzamemo 15 minut za predstavitev polne različice?"\n\nČE GA NISO VIDELI:\n"Ni problema. Na kratko: pripravil sem digitalni portal za goste posebej za ${hn}. Gostje si ga namestijo na telefon in z njim najdejo vse o Vašem hotelu${city ? ' in okolici ' + city : ''}. Naj Vam ga ponovno pošljem? Bi imeli ta teden 15 minut za kratek ogled?"\n\nČE ODKLONIJO:\n"Popolnoma razumem. Portal je na voljo kadarkoli na ${url}. Če si ga boste ogledali in bi se želeli pogovoriti, sem vedno dosegljiv."`,
+      note: 'Best call times: Tue to Thu, 10:00 to 11:30 or 14:00 to 15:30. Avoid check-in rush hours.' });
+
+    // Dan 8 Email
+    m.push({ day:8, channel:'email', phase:'value', purpose:'Primeri in reference',
       subject: 'Kako hoteli z digitalnim portalom povečujejo prihodke',
       body: `${greeting},\n\nhoteli z Nevronovim portalom za goste tipično dosegajo:\n\n- +13 % rast prihodkov (skozi vse implementacije)\n- Zmanjšanje povpraševanj na recepciji (do 30 %)\n- Marketinška ekipa aktivno upravlja vsebine prek platforme\n\nNekaj primerov:\n- Carana Beach Resort (Sejšeli, 40 sob): neprekinjene nadgradnje od leta 2016, +13 % prihodkov\n- The Fives Oceanfront (Mehika, 84 sob): +13 % prihodkov, digitalno obvestilno oglaševanje\n- Edgewater Resort & Spa (Cookovi otoki, 280 sob): +13 % prihodkov, zmanjšanje povpraševanj na recepciji\n\nPortal za ${hn} je že pripravljen: ${url}\n\nBi se splačalo nameniti 15 minut za pogovor o možnostih?\n\nLep pozdrav,\nRok` });
 
+    // Dan 10 WhatsApp
+    m.push({ day:10, channel:'whatsapp', phase:'value', purpose:'Predstavitev funkcionalnosti',
+      subject: null,
+      body: `${greeting}, kratka novost o portalu hotela ${hn}.\n\nAli ste vedeli, da Vaši gostje lahko prek portala uporabijo interaktivni vodič po okolici, prilagojena priporočila in orodja za komunikacijo z Vašo ekipo?\n\nPodobna funkcionalnost je pri hotelih z enakim portalom zmanjšala vprašanja na recepciji za 30 %.\n\nZ veseljem Vam pokažem več.` });
+
+    // Dan 12 LinkedIn
+    m.push({ day:12, channel:'linkedin', phase:'value', purpose:'Deljenje vsebine',
+      subject: null,
+      body: `${greeting}, naletel sem na zanimiv vpogled o trendih digitalne izkušnje gostov v hotelirstvu in pomislil na ${hn}.\n\n[Deli relevanten članek ali vpogled]\n\nMe zanima, ali to sovpada z Vašimi izkušnjami. Portal, ki sem ga pripravil za ${hn}, naslavlja več teh trendov.`,
+      note: 'Find a relevant hotel tech article. Engage with their LinkedIn activity before sending.' });
+
+    // Dan 14 Email
+    m.push({ day:14, channel:'email', phase:'value', purpose:'ROI in prošnja za sestanek',
+      subject: `Številke za portalom hotela ${hn}`,
+      body: `${greeting},\n\nhoteli z digitalnim portalom za goste tipično dosežejo:\n\n- Izboljšanje ocene, ki vodi k višjemu ADR\n- 2 do 5 % povečanje prihodkov od dodatnih storitev (spa, restavracija, aktivnosti)\n- 20 do 30 % zmanjšanje ponavljajočih se vprašanj na recepciji\n\nIndustrijski standard: izboljšanje ocene za 0,1 točke pomeni 10 EUR več na sobo na noč.\n\nZ veseljem bi izračunal, kaj to konkretno pomeni za ${hn}. Za natančen izračun bi potreboval le 15 minut Vašega časa.\n\nBi Vam kateri dan naslednji teden ustrezal?\n\nLep pozdrav,\nRok` });
+
+    // Dan 16 Phone
+    m.push({ day:16, channel:'phone', phase:'conversion', purpose:'Drugi klic',
+      subject: null,
+      body: `UVOD:\n"${greeting}, tukaj Rok iz Nevrona. Zadnji dve tedna sem z Vami delil portal za goste hotela ${hn}. Ste imeli priložnost, da si ga ogledate?"\n\nKLJUČNE TOČKE:\n- Omenite specifične funkcionalnosti portala\n- Navedite primer: "Carana Beach Resort dosega +13 % prihodkov"\n- Prosite za 15-minutni video klic\n- Če čas ne ustreza, vprašajte kdaj bi bilo bolje\n\nGLASOVNA POŠTA:\n"${greeting}, tukaj Rok iz Nevrona. Sledim portalu za goste, ki sem ga pripravil za ${hn}. Imam nekaj zanimivih podatkov o tem, kako podobni hoteli uporabljajo svoj portal. Z veseljem bi Vam namenil 15 minut. Poslal Vam bom e-pošto z razpoložljivimi termini."`,
+      note: 'Attempt #2 if Day 7 call was missed.' });
+
+    // Dan 17 Email
     m.push({ day:17, channel:'email', phase:'conversion', purpose:'Ponudba za nadgradnjo',
       subject: `Nadgradnja portala hotela ${hn}`,
       body: `${greeting},\n\nportal za goste hotela ${hn} trenutno temelji na javno dostopnih podatkih. Takole bi lahko izgledal v polni postavitvi:\n\nTrenutna različica:\n- Informacije o hotelu in sobah\n- Interaktivni vodič po okolici${city ? ' (' + city + ')' : ''}\n- Lokalna priporočila\n\nPolna različica (z Vašim sodelovanjem):\n- Vaša celostna grafična podoba\n- Povezava z rezervacijskim sistemom\n- Prilagojena komunikacija z gosti\n- Moduli za dodatno prodajo (spa, restavracija, aktivnosti)\n- Nadzorna plošča za osebje in upravljanje vsebin\n\nZ veseljem bi dodal Vašo grafično podobo in naredil portal resnično Vašega. Bi imeli 15 minut?\n\nLep pozdrav,\nRok` });
 
+    // Dan 19 WhatsApp glasovno sporočilo
+    m.push({ day:19, channel:'whatsapp', phase:'conversion', purpose:'Osebno glasovno sporočilo',
+      subject: null,
+      body: `SKRIPT ZA GLASOVNO SPOROČILO (30 do 45 sekund):\n\n"${greeting}, tukaj Rok. Želel sem se navezati na portal za goste, ki sem ga pripravil za ${hn}. Vem, da ste zaposleni, zato bom kratek. Z veseljem bi si vzel 15 minut in Vam pokazal celoten potencial portala za Vaše goste in Vašo ekipo. Bi imeli čas ta ali naslednji teden za kratek video klic? Sporočite mi in pošljem Vam povezavo za termin. Hvala!"`,
+      note: 'Record as a WhatsApp voice note, not text. Voice notes feel personal and get very high engagement.' });
+
+    // Dan 21 Email
     m.push({ day:21, channel:'email', phase:'conversion', purpose:'Zaključno sporočilo',
       subject: `Naj zaključim portal hotela ${hn}?`,
       body: `${greeting},\n\npred nekaj tedni sem pripravil portal za goste hotela ${hn} in ga delil z Vami, vendar se nisva uspela povezati.\n\nPopolnoma razumem, če čas ni pravi. Portal za zdaj ostaja aktiven, tako da si ga lahko ogledate, kadarkoli bo primerno: ${url}\n\nČe je to nekaj, kar bi ${hn} utegnil upoštevati v prihodnosti, mi le sporočite in Vas bom obveščal o tem, kaj drugi hoteli počnejo s svojimi portali.\n\nLep pozdrav,\nRok`,
@@ -1936,7 +2038,7 @@
     document.getElementById('summary-content').innerHTML = '<div class="summary-grid">'
       + '<div class="summary-card"><div class="summary-label">Hotel</div><div class="summary-value">' + esc(hn) + (d.city ? '<br><small>' + esc(d.city) + '</small>' : '') + '</div></div>'
       + '<div class="summary-card"><div class="summary-label">Portal</div><div class="summary-value">' + (d.portalUrl ? '<a href="' + esc(url) + '" target="_blank" style="color:var(--accent-light);word-break:break-all;">' + esc(url) + '</a>' : '<span style="color:var(--text-muted);">[Portal URL]</span>') + '</div></div>'
-      + '<div class="summary-card"><div class="summary-label">Sequence</div><div class="summary-value">' + messages.length + ' emails / 21 days<div class="channel-badges"><span class="channel-badge email">Email</span></div></div></div>'
+      + '<div class="summary-card"><div class="summary-label">Sequence</div><div class="summary-value">' + messages.length + ' touchpoints / 21 days<div class="channel-badges"><span class="channel-badge email">Email</span><span class="channel-badge linkedin">LinkedIn</span><span class="channel-badge whatsapp">WhatsApp</span><span class="channel-badge phone">Phone</span></div></div></div>'
       + '</div>';
 
     document.getElementById('timeline-content').innerHTML = renderTimeline(messages);
