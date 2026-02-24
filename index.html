@@ -649,6 +649,50 @@
     color: var(--text-muted);
     line-height: 1.6;
   }
+  .message-rationale {
+    margin-top: 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .message-rationale summary {
+    padding: 10px 14px;
+    background: var(--surface-2);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    user-select: none;
+    list-style: none;
+  }
+  .message-rationale summary::-webkit-details-marker { display: none; }
+  .message-rationale summary::before {
+    content: '\25B6';
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 10px;
+    transition: transform 0.15s;
+  }
+  .message-rationale[open] summary::before { transform: rotate(90deg); }
+  .message-rationale-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+  .rationale-item-label {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .rationale-item-text { color: var(--text-secondary); }
   .message-card-footer {
     display: flex;
     justify-content: flex-end;
@@ -1665,10 +1709,187 @@
     }).join('')}</div>`;
   }
 
-  function renderMessages(messages) {
+  const RATIONALE = {
+    '1-email': {
+      en: {
+        best: 'Email is the only channel that allows a structured, detailed first impression with subject line, portal link, and full value proposition. It sits in the inbox for reference and creates an anchor for all follow-up touches.',
+        chosen: 'We lead with the personalized portal as the "gift" rather than a pitch. This pattern (give first, ask later) consistently outperforms traditional cold intros. The subject line references their specific hotel to cut through noise.',
+        alt: 'LinkedIn InMail could also work as a first touch, but character limits prevent sharing the full portal context. A phone call as opener has the highest rejection rate for cold outreach.'
+      },
+      sl: {
+        best: 'Email je edini kanal, ki omogoča strukturiran, podroben prvi vtis s predmetom, povezavo do portala in celotno ponudbo vrednosti. Ostane v nabiralniku za kasnejši pregled in ustvari sidro za vsa nadaljnja sporočila.',
+        chosen: 'Vodimo s personaliziranim portalom kot "darilo" namesto s prodajnim pristopom. Ta vzorec (najprej daj, potem prosi) dosledno prekaša klasične hladne predstavitve. Predmet sporočila omenja specifičen hotel, da se prebije skozi šum.',
+        alt: 'LinkedIn InMail bi tudi lahko deloval kot prvi stik, vendar omejitev znakov preprečuje deljenje celotnega konteksta portala. Telefonski klic kot začetni pristop ima najvišjo stopnjo zavrnitev.'
+      }
+    },
+    '2-linkedin': {
+      en: {
+        best: 'LinkedIn is the top channel for B2B relationship building. A connection request on Day 2 creates a second touchpoint on a different platform, reinforcing name recognition without feeling pushy.',
+        chosen: 'Timing on Day 2 (not Day 1) avoids the "blitz" feel. The connection note is kept short and references the email/portal so it feels like continuity, not a separate cold outreach. Under 300 chars to fit the connection request limit.',
+        alt: 'A LinkedIn InMail (paid) could be longer but feels more transactional. Waiting until Day 3+ would lose the momentum from the email.'
+      },
+      sl: {
+        best: 'LinkedIn je najboljši kanal za gradnjo B2B odnosov. Zahteva za povezavo na Dan 2 ustvari drugo točko stika na drugačni platformi in okrepi prepoznavnost imena brez občutka vsiljivosti.',
+        chosen: 'Čas na Dan 2 (ne Dan 1) prepreči občutek "bombardiranja". Sporočilo ob zahtevi za povezavo je kratko in se sklicuje na email/portal, tako da deluje kot nadaljevanje, ne ločen hladen pristop. Pod 300 znaki, da ustreza limitu.',
+        alt: 'LinkedIn InMail (plačljiv) bi bil lahko daljši, vendar deluje bolj transakcijsko. Čakanje do dneva 3+ bi izgubilo zagon iz emaila.'
+      }
+    },
+    '3-whatsapp': {
+      en: {
+        best: 'WhatsApp has the highest open rate of any messaging channel (98%). A brief Day 3 message makes the outreach feel personal and modern. Hotel managers often check WhatsApp more frequently than email.',
+        chosen: 'The message is deliberately casual and short. It references the portal link with a friendly nudge rather than reselling the pitch. The informal tone matches WhatsApp etiquette and differentiates from the formal email.',
+        alt: 'SMS could reach the same device but lacks rich media and read receipts. A second email on Day 3 would feel repetitive and stays in the same channel.'
+      },
+      sl: {
+        best: 'WhatsApp ima najvišjo stopnjo odpiranja sporočil (98 %). Kratko sporočilo na Dan 3 naredi pristop oseben in sodoben. Hotelski managerji pogosto preverjajo WhatsApp pogosteje kot email.',
+        chosen: 'Sporočilo je namerno sproščeno in kratko. Sklicuje se na portal s prijaznim opominom namesto ponovnega prodajanja. Neformalen ton ustreza bontonu WhatsAppa in se razlikuje od formalnega emaila.',
+        alt: 'SMS bi dosegel isto napravo, vendar nima bogatih medijev in potrdil o branju. Drugi email na Dan 3 bi deloval ponavljajoče in ostane v istem kanalu.'
+      }
+    },
+    '5-email': {
+      en: {
+        best: 'Email is ideal for sharing a Loom video link with context. The inbox is where recipients save and revisit content, making it perfect for a video walkthrough they can watch on their own time.',
+        chosen: 'Day 5 creates a 2 day gap from WhatsApp, which prevents fatigue. The Loom video adds a face and voice to the outreach, dramatically increasing trust. Referencing the portal they already received keeps the thread cohesive.',
+        alt: 'Sharing the Loom via WhatsApp would work but the link preview is less prominent. LinkedIn posts about the portal would be visible to everyone, not targeted.'
+      },
+      sl: {
+        best: 'Email je idealen za deljenje Loom video povezave s kontekstom. Nabiralnik je prostor, kjer prejemniki shranijo in ponovno pregledajo vsebino, zato je popoln za video predstavitev, ki jo lahko gledajo v svojem času.',
+        chosen: 'Dan 5 ustvari 2 dnevni premor od WhatsAppa, kar prepreči utrujenost. Loom video doda obraz in glas pristopu, kar dramatično poveča zaupanje. Sklicevanje na portal, ki so ga že prejeli, ohranja smiselno nit.',
+        alt: 'Deljenje Loom videa prek WhatsAppa bi delovalo, vendar je predogled povezave manj izrazit. LinkedIn objava o portalu bi bila vidna vsem, ne ciljno usmerjena.'
+      }
+    },
+    '7-phone': {
+      en: {
+        best: 'A phone call on Day 7 is the first synchronous touchpoint. After 6 days of async messages, a live conversation dramatically accelerates trust building and allows real time objection handling.',
+        chosen: 'By Day 7, the prospect has seen the portal, video, and multiple messages. The call is a "warm" follow up, not a cold call. We reference the portal and video to give the call a natural opening. Morning timing (9:00 to 11:00) catches hotel managers before afternoon operations.',
+        alt: 'A video call invite could work but adds friction (scheduling). Waiting longer for the first call risks losing momentum from the initial sequence.'
+      },
+      sl: {
+        best: 'Telefonski klic na Dan 7 je prva sinhrona točka stika. Po 6 dneh asinhronih sporočil živi pogovor dramatično pospeši gradnjo zaupanja in omogoča takojšnje reševanje ugovorov.',
+        chosen: 'Do dneva 7 je prospekt videl portal, video in več sporočil. Klic je "toplo" nadaljevanje, ne hladen klic. Sklicujemo se na portal in video za naraven začetek pogovora. Jutranji čas (9:00 do 11:00) ujame hotelske managerje pred popoldanskimi operacijami.',
+        alt: 'Povabilo na video klic bi delovalo, vendar doda trenje (dogovarjanje termina). Predolgo čakanje na prvi klic tvega izgubo zagona iz začetne sekvence.'
+      }
+    },
+    '8-email': {
+      en: {
+        best: 'Email is the best channel for sharing detailed case studies with numbers and links. Social proof is most effective when the reader can absorb it at their own pace and forward it to decision makers.',
+        chosen: 'Day 8 (one day after the call) strikes while the iron is hot. Whether or not the call connected, the case studies provide third party validation. We cite specific metrics (+13% revenue, 30% fewer inquiries) to make the proof concrete and verifiable.',
+        alt: 'A LinkedIn post with case study snippets would reach a broader audience but is not personalized. WhatsApp is too informal for detailed data.'
+      },
+      sl: {
+        best: 'Email je najboljši kanal za deljenje podrobnih študij primerov s številkami in povezavami. Socialni dokaz je najučinkovitejši, ko ga bralec lahko prebavi v svojem tempu in posreduje odločevalcem.',
+        chosen: 'Dan 8 (en dan po klicu) izkoristi svež zagon. Ne glede na to, ali je bil klic uspešen, študije primerov zagotovijo zunanjo potrditev. Navajamo specifične metrike (+13 % prihodkov, 30 % manj povpraševanj) za konkreten in preverljiv dokaz.',
+        alt: 'LinkedIn objava z delčki študij primerov bi dosegla širše občinstvo, vendar ni personalizirana. WhatsApp je preveč neformalen za podrobne podatke.'
+      }
+    },
+    '10-whatsapp': {
+      en: {
+        best: 'WhatsApp is perfect for a quick, high impact "value drop" that feels like a personal tip rather than marketing. A single compelling feature highlight lands better on mobile than a full email.',
+        chosen: 'Day 10 is mid sequence. Energy and attention are naturally dipping. A short, punchy WhatsApp message about a specific feature (interactive area guide, guest communication tools) reignites interest. The casual tone breaks the pattern of formal emails.',
+        alt: 'An email could deliver the same content but is more likely to be skipped at this point. A phone call would be too aggressive for a feature highlight.'
+      },
+      sl: {
+        best: 'WhatsApp je popoln za hiter, učinkovit "delček vrednosti", ki deluje kot osebni nasvet namesto marketinga. En sam prepričljiv poudarek funkcionalnosti pristane bolje na mobilni napravi kot poln email.',
+        chosen: 'Dan 10 je sredi sekvence. Energija in pozornost naravno pojenjata. Kratko, jedrnato WhatsApp sporočilo o specifični funkcionalnosti (interaktivni vodič po okolici, orodja za komunikacijo z gosti) ponovno vzbudi zanimanje.',
+        alt: 'Email bi dostavil isto vsebino, vendar je ob tej točki bolj verjetno prezrt. Telefonski klic bi bil preveč agresiven za izpostavitev funkcionalnosti.'
+      }
+    },
+    '12-linkedin': {
+      en: {
+        best: 'LinkedIn is uniquely suited for sharing industry insights and positioning yourself as a thought partner rather than a seller. Content sharing builds credibility and keeps you visible in their feed.',
+        chosen: 'By Day 12, we pivot from direct pitching to value sharing. Posting or sharing a relevant article about hotel guest experience trends, digital concierge adoption, or OTA dependency positions Rok as someone who understands their world. This is soft selling at its best.',
+        alt: 'Email could deliver the same insight but lacks the public social proof of a LinkedIn interaction. WhatsApp would feel out of place for industry content sharing.'
+      },
+      sl: {
+        best: 'LinkedIn je edinstveno primeren za deljenje industrijskih vpogledov in pozicioniranje kot strateški partner namesto prodajalec. Deljenje vsebine gradi verodostojnost in ohranja vidnost v njihovem toku.',
+        chosen: 'Do dneva 12 preidemo od neposrednega prodajanja k deljenju vrednosti. Objava ali deljenje relevantnega članka o trendih izkušnje hotelskih gostov, sprejetju digitalnega concierge ali odvisnosti od OTA portalov pozicionira Roka kot nekoga, ki razume njihov svet.',
+        alt: 'Email bi dostavil isti vpogled, vendar nima javnega socialnega dokaza LinkedIn interakcije. WhatsApp bi deloval neprimerno za deljenje industrijske vsebine.'
+      }
+    },
+    '14-email': {
+      en: {
+        best: 'Email is the right channel for presenting ROI calculations and making a direct meeting request. The formal structure allows including numbers, a clear CTA, and a calendar link that the recipient can act on asynchronously.',
+        chosen: 'Day 14 marks the transition from value building to conversion. After two weeks of consistent multi channel contact, trust is established. The ROI focus shifts the conversation from "interesting tool" to "business case." We include a specific meeting ask with a proposed time to reduce friction.',
+        alt: 'A phone call could also deliver the ROI pitch but the numbers are harder to absorb verbally. LinkedIn is too informal for a formal business proposal.'
+      },
+      sl: {
+        best: 'Email je pravi kanal za predstavitev izračunov ROI in neposredno prošnjo za sestanek. Formalna struktura omogoča vključitev številk, jasnega poziva k akciji in povezave za koledar, na katero lahko prejemnik reagira asinhrono.',
+        chosen: 'Dan 14 označi prehod iz gradnje vrednosti v konverzijo. Po dveh tednih doslednega večkanalnega kontakta je zaupanje vzpostavljeno. Fokus na ROI premakne pogovor iz "zanimivo orodje" v "poslovni primer." Vključimo specifično prošnjo za sestanek s predlaganim terminom za zmanjšanje trenja.',
+        alt: 'Telefonski klic bi tudi lahko dostavil ROI argumente, vendar so številke težje dojemljive ustno. LinkedIn je preveč neformalen za formalen poslovni predlog.'
+      }
+    },
+    '16-phone': {
+      en: {
+        best: 'A second phone call adds urgency and personal commitment. It signals persistence without aggression. For prospects who have been passively consuming content, a live voice can tip the scale toward action.',
+        chosen: 'Day 16 follows the ROI email (Day 14), giving 2 days to digest. This call is framed as a "quick check in" rather than a hard close. If the first call on Day 7 did not connect, this is a fresh attempt with much more shared context. If it did connect, this deepens the relationship.',
+        alt: 'A video message (Loom) could serve a similar purpose but lacks the two way interaction. Another email at this point risks blending into the existing thread.'
+      },
+      sl: {
+        best: 'Drugi telefonski klic doda nujnost in osebno zavzetost. Signalizira vztrajnost brez agresivnosti. Za prospekte, ki so pasivno konzumirali vsebino, lahko živ glas nagne tehtnico proti akciji.',
+        chosen: 'Dan 16 sledi ROI emailu (Dan 14), kar da 2 dneva za prebavo. Klic je zasnovan kot "hiter pregled" namesto trdega zaključka. Če prvi klic na Dan 7 ni uspel, je to svež poskus z mnogo več skupnega konteksta.',
+        alt: 'Video sporočilo (Loom) bi služilo podobnemu namenu, vendar nima dvosmerne interakcije. Še en email ob tej točki tvega, da se zlije z obstoječo nitjo.'
+      }
+    },
+    '17-email': {
+      en: {
+        best: 'Email is ideal for presenting a tangible offer or next step. Offering to enhance their portal based on feedback creates a concrete reason to engage and shows you are already invested in their success.',
+        chosen: 'Day 17 (one day after the second call) provides a specific action item regardless of call outcome. The "enhance portal" offer reframes the conversation from "buy our product" to "let us improve what we already built for you." This creates reciprocity and sunk cost momentum.',
+        alt: 'WhatsApp could deliver a quick version of the offer but lacks the formality for a business proposal. LinkedIn is better for relationship building than transactional offers.'
+      },
+      sl: {
+        best: 'Email je idealen za predstavitev otipljive ponudbe ali naslednjega koraka. Ponudba za nadgradnjo portala na podlagi povratnih informacij ustvari konkreten razlog za angažma in pokaže, da ste že vloženi v njihov uspeh.',
+        chosen: 'Dan 17 (en dan po drugem klicu) zagotovi specifično nalogo ne glede na izid klica. Ponudba "nadgradnje portala" preoblikuje pogovor iz "kupite naš produkt" v "dovolite nam izboljšati, kar smo že zgradili za vas." To ustvari recipročnost in zagon.',
+        alt: 'WhatsApp bi dostavil kratko verzijo ponudbe, vendar nima formalnosti za poslovni predlog. LinkedIn je bolj primeren za gradnjo odnosov kot transakcijske ponudbe.'
+      }
+    },
+    '19-whatsapp': {
+      en: {
+        best: 'WhatsApp voice notes feel deeply personal and human. At Day 19, when written messages may have become routine, hearing an actual voice creates an emotional connection that text cannot match.',
+        chosen: 'A voice note on WhatsApp is the most underused yet highest converting B2B tactic. It takes 30 seconds to record, cannot be "skimmed" like text, and feels like a 1:1 conversation. At this stage, the personal touch can break through decision fatigue.',
+        alt: 'A Loom video could serve a similar purpose but requires the recipient to click and watch. A regular WhatsApp text message would blend in with previous messages.'
+      },
+      sl: {
+        best: 'WhatsApp glasovna sporočila delujejo globoko osebno in človeško. Na Dan 19, ko so pisna sporočila morda postala rutina, slišanje pravega glasu ustvari čustveno povezavo, ki je besedilo ne more doseči.',
+        chosen: 'Glasovno sporočilo na WhatsAppu je najbolj premalo uporabljena, a najučinkovitejša B2B taktika. Posneti ga traja 30 sekund, ga ni mogoče "preleteti" kot besedilo in deluje kot pogovor 1:1. Na tej stopnji osebni pristop prebije utrujenost pri odločanju.',
+        alt: 'Loom video bi služil podobnemu namenu, vendar zahteva, da prejemnik klikne in gleda. Navadno WhatsApp besedilo bi se zlilo s prejšnjimi sporočili.'
+      }
+    },
+    '21-email': {
+      en: {
+        best: 'Email is the proper channel for a professional "breakup" message. It allows a graceful close to the sequence while leaving the door open. The formal channel matches the tone of wrapping up a business conversation.',
+        chosen: 'The "closing your file" breakup pattern is one of the highest performing late sequence tactics. It triggers loss aversion: the prospect realizes the portal and attention are about to go away. Day 21 provides a clean 3 week boundary that feels intentional, not arbitrary.',
+        alt: 'A phone call could deliver the same message but may feel confrontational. WhatsApp is too casual for a formal close. LinkedIn should remain positive and forward looking.'
+      },
+      sl: {
+        best: 'Email je primeren kanal za profesionalno "zaključno" sporočilo. Omogoča eleganten zaključek sekvence, hkrati pa pusti odprta vrata. Formalni kanal ustreza tonu zaključevanja poslovnega pogovora.',
+        chosen: 'Vzorec "zapiram vašo datoteko" je ena izmed najučinkovitejših taktik v pozni sekvenci. Sproži averzijo do izgube: prospekt spozna, da bosta portal in pozornost kmalu izginila. Dan 21 zagotovi čisto 3 tedensko mejo, ki deluje namerno, ne arbitrarno.',
+        alt: 'Telefonski klic bi dostavil isto sporočilo, vendar bi lahko deloval konfrontacijsko. WhatsApp je preveč sproščen za formalen zaključek. LinkedIn naj ostane pozitiven in usmerjen v prihodnost.'
+      }
+    }
+  };
+
+  function renderMessages(messages, lang) {
+    lang = lang || 'en';
+    var ratLabels = lang === 'sl'
+      ? { title: 'Strateško ozadje', best: 'Najboljša opcija', chosen: 'Pristop', alt: 'Alternative' }
+      : { title: 'Strategic Rationale', best: 'Best option', chosen: 'Approach', alt: 'Alternatives' };
     return `<div class="message-cards">${messages.map((m, i) => {
       const subjH = m.subject ? `<div class="message-subject">Subject: ${esc(m.subject)}</div>` : '';
       const noteH = m.note ? `<div class="message-note">${esc(m.note)}</div>` : '';
+      var rk = m.day + '-' + m.channel;
+      var r = RATIONALE[rk];
+      var ratH = '';
+      if (r) {
+        var rd = r[lang] || r.en;
+        ratH = `<details class="message-rationale">
+          <summary>${ratLabels.title}</summary>
+          <div class="message-rationale-body">
+            <div><div class="rationale-item-label">${ratLabels.best}</div><div class="rationale-item-text">${esc(rd.best)}</div></div>
+            <div><div class="rationale-item-label">${ratLabels.chosen}</div><div class="rationale-item-text">${esc(rd.chosen)}</div></div>
+            <div><div class="rationale-item-label">${ratLabels.alt}</div><div class="rationale-item-text">${esc(rd.alt)}</div></div>
+          </div>
+        </details>`;
+      }
       return `<div class="message-card ch-${m.channel}" id="msg-${i}">
         <div class="message-card-header">
           <div class="message-channel-icon ${m.channel}">${CHANNEL_ICONS[m.channel]}</div>
@@ -1677,7 +1898,7 @@
             <div class="message-purpose">${esc(m.purpose)}</div>
           </div>
         </div>
-        <div class="message-card-body">${subjH}<div class="message-text">${esc(m.body)}</div>${noteH}</div>
+        <div class="message-card-body">${subjH}<div class="message-text">${esc(m.body)}</div>${noteH}${ratH}</div>
         <div class="message-card-footer"><button class="btn btn-copy" onclick="copyMessage(${i})">Copy</button></div>
       </div>`;
     }).join('')}</div>`;
@@ -1822,7 +2043,7 @@
 
     document.getElementById('summary-content').innerHTML = renderSummary(d, v, messages);
     document.getElementById('timeline-content').innerHTML = renderTimeline(messages);
-    document.getElementById('messages-content').innerHTML = renderMessages(messages);
+    document.getElementById('messages-content').innerHTML = renderMessages(messages, v.lang);
     document.getElementById('roi-content').innerHTML = renderROI(d, v, calculateROI(d, v));
     document.getElementById('loom-content').innerHTML = renderLoom(d, v);
     document.getElementById('checklist-content').innerHTML = renderChecklist(messages, d.hotelName);
@@ -2042,7 +2263,7 @@
       + '</div>';
 
     document.getElementById('timeline-content').innerHTML = renderTimeline(messages);
-    document.getElementById('messages-content').innerHTML = renderMessages(messages);
+    document.getElementById('messages-content').innerHTML = renderMessages(messages, d.lang);
     document.getElementById('checklist-content').innerHTML = renderChecklist(messages, hn);
     document.getElementById('gen-date').textContent = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
 
